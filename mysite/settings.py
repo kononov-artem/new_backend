@@ -201,27 +201,3 @@ LOGGING = {
         },
     }
 }
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'file': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'filename': os.path.join(LOG_DIR, 'debug.log')
-#             # 'maxBytes': MAX_LOG_FILE_SIZE,
-#         },
-#     },
-#     'formatters': {
-#         'verbose': {
-#             'format': '[%(asctime)s]: %(levelname)s: %(message)s'
-#         },
-#     },
-#     'loggers': {
-#         'django.request': {
-#             'handlers': ['file'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }

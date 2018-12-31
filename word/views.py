@@ -81,47 +81,6 @@ def _save_word(language, word):
     return obj
 
 
-def git_ditionary_by_name(request):
-    dictionary = request.GET.get('dictionary')
-    if not dictionary:
-        raise Http404
-    user = request.user
-    custom_dict = get_object_or_404(Dictionaries, name=dictionary, user=user)
-    dict_name = custom_dict.name
-    language = custom_dict.language.language
-    language_to = custom_dict.language_to.language
-    translates = custom_dict.translate.all()
-    words = []
-    for translate in translates:
-        # print(translate.word.word, translate.translate.word)
-        dct = {
-            'original': translate.word.word,
-            'translate': translate.translate.word
-        }
-        words.append(dct)
-
-    logger.debug(f'{request.user}, {dict_name}, {language}, {language_to}')
-
-    return JsonResponse({
-        'user': str(user),
-        'name': dict_name,
-        'language': language,
-        'language_to': language_to,
-        'words': words
-    })
-
-
-def get_your_dct(request):
-    user = User.objects.get(pk=1)
-    dicts = Dictionaries.objects.filter(user__pk=user.pk)
-    dicts = [dct.name for dct in dicts]
-
-    response = JsonResponse({
-        'dicts': dicts,
-    })
-    return response
-
-
 def word_traine_get_word(request):
     words = Translate.objects.all()
     data = []
