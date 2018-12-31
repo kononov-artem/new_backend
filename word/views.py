@@ -1,11 +1,15 @@
 import json
+import logging
 
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import JsonResponse, Http404
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 from word.models import Languages, Words, Dictionaries, Translate
+
+
+logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
@@ -77,30 +81,33 @@ def _save_word(language, word):
     return obj
 
 
-def get_data(request):
-    dictionary = request.GET['dictionary']
-    d = Dictionaries.objects.get(name=dictionary)
-    name = d.name
-    users = d.user.all()
-    language = d.language.language
-    language_to = d.language_to.language
-    translates = d.translate.all()
-    lst = []
+def git_ditionary_by_name(request):
+    dictionary = request.GET.get('dictionary')
+    if not dictionary:
+        raise Http404
+    user = request.user
+    custom_dict = get_object_or_404(Dictionaries, name=dictionary, user=user)
+    dict_name = custom_dict.name
+    language = custom_dict.language.language
+    language_to = custom_dict.language_to.language
+    translates = custom_dict.translate.all()
+    words = []
     for translate in translates:
-        print(translate.word.word, translate.translate.word)
+        # print(translate.word.word, translate.translate.word)
         dct = {
             'original': translate.word.word,
             'translate': translate.translate.word
         }
-        lst.append(dct)
-    print(name, language, language_to)
-    print(request.user)
+        words.append(dct)
+
+    logger.debug(f'{request.user}, {dict_name}, {language}, {language_to}')
+
     return JsonResponse({
-        'user': str(users[0]),
-        'name': name,
+        'user': str(user),
+        'name': dict_name,
         'language': language,
         'language_to': language_to,
-        'words': lst
+        'words': words
     })
 
 
