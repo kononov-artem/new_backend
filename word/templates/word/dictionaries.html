@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!--<form method="post" action=".">-->
+    <!--{% csrf_token %}-->
+        <!--<label for="">Dictionary name</label>-->
+        <!--{{ form.name }}-->
+    <!--</form>-->
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script>
+        function f() {
+            var data = [{
+                'dictionary': {
+                    'create_new': 'true',
+                    'name': 'dct_2',
+                    'language': 'Jpan',
+                    'language_to': 'Russian',
+                    'words': [
+                        {
+                            'original': 'Keko',
+                            'translate': 'zdorov'
+                        },
+                        {
+                            'original': 'gogog',
+                            'translate': 'pteradacle'
+                        },
+                        {
+                            'original': 'pedro',
+                            'translate': 'den'
+                        }
+                    ]
+                }
+            }];
+            var response = {data: data};
+            json_response = JSON.stringify(response);
+            $.post('/dictionaries/json/',json_response);
+        }
+    </script>
+</body>
+</html>
