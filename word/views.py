@@ -1,52 +1,11 @@
 import json
 
 from django.contrib.auth.models import User
-from django.http import HttpResponseServerError, HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, TemplateView, FormView
-from word.forms import LanguagesForm, WordsForm, DictionariesForm
+
 from word.models import Languages, Words, Dictionaries, Translate
-
-
-class LanguagesView(FormView):
-    template_name = 'word/languages.html'
-    form_class = LanguagesForm
-    model = Languages
-
-    def form_valid(self, form):
-        form.save()
-        return redirect(self.get_redirect_url())
-
-    def get_redirect_url(self):
-        return reverse('word_languages')
-
-
-class WordsView(FormView):
-    template_name = 'word/words.html'
-    form_class = WordsForm
-    model = Words
-
-    def form_valid(self, form):
-        form.save()
-        return redirect(self.get_redirect_url())
-
-    def get_redirect_url(self):
-        return reverse('word_languages')
-
-
-class DictionariesView(FormView):
-    template_name = 'word/dictionaries.html'
-    form_class = DictionariesForm
-    model = Dictionaries
-
-    def form_valid(self, form):
-        form.save()
-        return redirect(self.get_redirect_url())
-
-    def get_redirect_url(self):
-        return reverse('word_dictionaries')
 
 
 @csrf_exempt
