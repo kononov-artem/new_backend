@@ -46,6 +46,7 @@ CORS_ALLOW_HEADERS = (
 
 PROJECT_APPS = [
     'word',
+    'api',
 ]
 
 INSTALLED_APPS = [
@@ -204,4 +205,9 @@ LOGGING = {
             'level': "DEBUG",
         },
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
