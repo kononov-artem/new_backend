@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from api.serializers import UserListSerializer, GroupListSerializer, LanguagesSerializer, WordsSerializer, \
     TranslateSerializer, \
     DictionariesSerializer, UserDetailSerializer, TranslateDetailSerializer, LanguageDetailSerializer, \
-    LanguagePostSerializer
+    LanguagePostSerializer, WordPostSerializer
 from word.models import Languages, Words, Translate, Dictionaries
 
 
@@ -111,5 +111,25 @@ class LanguageAdd(APIView):
         language = LanguagePostSerializer(data=request.data)
         if language.is_valid():
             language.save()
+            return Response({'status': 'ok'})
+        return Response({'status': 'error'})
+
+
+class WordAdd(APIView):
+
+    permission_classes = [permissions.AllowAny]
+
+    def get_language_id(self, language):
+        try:
+            language_obj = Languages.objects.get(language=language)
+        except Translate.DoesNotExist:
+            raise Http404
+        return language_obj.id
+
+    def post(self, request):
+        request.data['language'] = self.get_language_id(request.data['language'])
+        word = WordPostSerializer(data=request.data)
+        if word.is_valid():
+            word.save()
             return Response({'status': 'ok'})
         return Response({'status': 'error'})

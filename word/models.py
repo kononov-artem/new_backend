@@ -5,7 +5,7 @@ from django.db import models
 
 
 class Languages(models.Model):
-    language = models.CharField(max_length=200)
+    language = models.CharField(max_length=200, unique=True)
     is_approve = models.BooleanField(default=False)
     is_in_translate = models.BooleanField(default=False)
 
@@ -17,7 +17,7 @@ class Words(models.Model):
     word = models.CharField(max_length=200)
     is_approve = models.BooleanField(default=False)
     is_in_translate = models.BooleanField(default=False)
-    language = models.ForeignKey(Languages, models.SET_NULL, blank=True, null=True)
+    language = models.ForeignKey(Languages, models.CASCADE)
 
     def __str__(self):
         return self.word

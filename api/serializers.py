@@ -31,7 +31,7 @@ class WordsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Words
-        fields = ('word', 'language', 'is_approve', 'is_in_translate')
+        fields = ('id', 'word', 'language', 'is_approve', 'is_in_translate')
 
 
 class TranslateSerializer(serializers.ModelSerializer):
@@ -105,3 +105,10 @@ class LanguagePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Languages
         fields = ('language',)
+
+
+class WordPostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Words
+        fields = ('word', 'language')
