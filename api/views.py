@@ -88,7 +88,6 @@ class TranslateDetailDetail(APIView):
         return Response(serializer.data)
 
 
-
 class LanguageDetailDetail(APIView):
 
     def get_object(self, pk):
