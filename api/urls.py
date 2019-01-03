@@ -22,4 +22,8 @@ urlpatterns = [
     path('language/add/', views.LanguageAdd.as_view(), name='language_add'),
     path('word/add/', views.WordAdd.as_view(), name='word_add'),
     #     # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+
+    path(r'auth/', include('djoser.urls')),
+    path(r'auth/', include('djoser.urls.authtoken')),
+    path(r'auth/', include('djoser.urls.jwt')),
 ]
