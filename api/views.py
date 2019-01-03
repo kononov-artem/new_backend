@@ -31,6 +31,8 @@ class LanguagesView(APIView):
 
 class WordsView(APIView):
 
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
         words = Words.objects.all()
         serializer = WordsSerializer(words, many=True)
