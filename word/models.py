@@ -42,6 +42,7 @@ class Dictionaries(models.Model):
     language_to = models.ForeignKey(Languages, models.SET_NULL, related_name='language_to', blank=True, null=True)
     translate = models.ManyToManyField(Translate)
     user = models.ManyToManyField(User)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

@@ -3,6 +3,7 @@ from django.http import Http404
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Q
 
 from api.serializers import UserListSerializer, GroupListSerializer, LanguagesSerializer, WordsSerializer, \
     TranslateSerializer, \
@@ -50,7 +51,8 @@ class TranslateView(APIView):
 class DictionariesView(APIView):
 
     def get(self, request):
-        dictionaries = Dictionaries.objects.all()
+        # .filter(Q(income__gte=5000) | Q(income__isnull=True))
+        dictionaries = Dictionaries.objects.filter(user=request.user)
         serializer = DictionariesSerializer(dictionaries, many=True, context={'request': request})
         return Response(serializer.data)
 

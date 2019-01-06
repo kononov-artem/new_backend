@@ -79,7 +79,7 @@ class DictionariesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dictionaries
-        fields = ('name', 'is_approve', 'date', 'language', 'language_to', 'translate', 'user')
+        fields = ('name', 'is_approve', 'date', 'language', 'language_to', 'translate', 'user', 'is_active')
 
 
 class UserDetailSerializer(serializers.Serializer):
