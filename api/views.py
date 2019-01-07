@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User, Group
 from django.http import Http404
 from rest_framework import viewsets, permissions
@@ -129,3 +131,27 @@ class WordAdd(APIView):
             word.save()
             return Response({'status': 'ok'})
         return Response({'status': 'error'})
+
+
+class DictionariesUpdate(APIView):
+
+    permission_classes = [permissions.AllowAny]
+
+    def get_dict_obj(self, id):
+        try:
+            dictionary_obj = Dictionaries.objects.get(pk=id)
+        except Translate.DoesNotExist:
+            raise Http404
+        return dictionary_obj
+
+    def post(self, request):
+        dictionaries = request.data['data']
+        for dictionary in dictionaries:
+            dictionary_obj = self.get_dict_obj(dictionary['id'])
+            if 'name' in dictionary:
+                dictionary_obj.name = dictionary['name']
+            if 'is_active' in dictionary:
+                dictionary_obj.is_active = dictionary['is_active']
+            # TODO: add translate and delete
+            dictionary_obj.save()
+        return Response({'status': 'ok'})

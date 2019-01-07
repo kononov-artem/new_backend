@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'languages', views.LanguagesView.as_view(), name='languages'),
     url(r'words', views.WordsView.as_view(), name='words'),
     url(r'translates', views.TranslateView.as_view(), name='translates'),
+    path('dictionaries/update/', views.DictionariesUpdate.as_view(), name='dictionaries_update'),
     url(r'dictionaries', views.DictionariesView.as_view(), name='dictionaries'),
 
     path('user/<int:pk>/', views.UserDetail.as_view(), name='user_detail'),
@@ -21,6 +22,7 @@ urlpatterns = [
     path('language/<int:pk>/', views.LanguageDetailDetail.as_view(), name='language_detail'),
     path('language/add/', views.LanguageAdd.as_view(), name='language_add'),
     path('word/add/', views.WordAdd.as_view(), name='word_add'),
+
     #     # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
     path(r'auth/', include('djoser.urls')),
