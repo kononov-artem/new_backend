@@ -10,7 +10,7 @@ from django.db.models import Q
 from api.serializers import UserListSerializer, GroupListSerializer, LanguagesSerializer, WordsSerializer, \
     TranslateSerializer, \
     DictionariesSerializer, UserDetailSerializer, TranslateDetailSerializer, LanguageDetailSerializer, \
-    LanguagePostSerializer, WordPostSerializer
+    LanguagePostSerializer, WordPostSerializer, DictionaryDetailSerializer
 from word.models import Languages, Words, Translate, Dictionaries
 
 
@@ -98,6 +98,20 @@ class LanguageDetailDetail(APIView):
     def get(self, request, pk, format=None):
         language = self.get_object(pk)
         serializer = LanguageDetailSerializer(language)
+        return Response(serializer.data)
+
+
+class DictionaryDetail(APIView):
+
+    def get_object(self, pk, user):
+        try:
+            return Dictionaries.objects.get(pk=pk, user=user)
+        except Translate.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        dictionary = self.get_object(pk, request.user)
+        serializer = DictionaryDetailSerializer(dictionary)
         return Response(serializer.data)
 
 

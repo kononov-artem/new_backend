@@ -17,7 +17,6 @@ class GroupListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class LanguagesSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Languages
         fields = ('id', 'language', 'is_approve', 'is_in_translate')
@@ -101,6 +100,16 @@ class LanguageDetailSerializer(serializers.Serializer):
     is_in_translate = serializers.BooleanField()
 
 
+class DictionaryDetailSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(max_length=100)
+    language = serializers.CharField(max_length=100)
+    language_to = serializers.CharField(max_length=100)
+    is_approve = serializers.BooleanField()
+    is_active = serializers.BooleanField()
+    translate = TranslateDetailSerializer(many=True, read_only=True)
+
+
 class LanguagePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Languages
@@ -108,7 +117,6 @@ class LanguagePostSerializer(serializers.ModelSerializer):
 
 
 class WordPostSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Words
         fields = ('word', 'language')

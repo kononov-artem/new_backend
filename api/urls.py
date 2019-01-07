@@ -20,6 +20,7 @@ urlpatterns = [
     path('user/<int:pk>/', views.UserDetail.as_view(), name='user_detail'),
     path('translate/<int:pk>/', views.TranslateDetailDetail.as_view(), name='translate_detail'),
     path('language/<int:pk>/', views.LanguageDetailDetail.as_view(), name='language_detail'),
+    path('dictionary/<int:pk>/', views.DictionaryDetail.as_view(), name='dictionary_detail'),
     path('language/add/', views.LanguageAdd.as_view(), name='language_add'),
     path('word/add/', views.WordAdd.as_view(), name='word_add'),
 
