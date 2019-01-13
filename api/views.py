@@ -33,7 +33,6 @@ class LanguagesView(APIView):
 
 
 class WordsView(APIView):
-
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
@@ -116,7 +115,6 @@ class DictionaryDetail(APIView):
 
 
 class LanguageAdd(APIView):
-
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -128,7 +126,6 @@ class LanguageAdd(APIView):
 
 
 class WordAdd(APIView):
-
     permission_classes = [permissions.AllowAny]
 
     def get_language_id(self, language):
@@ -148,7 +145,6 @@ class WordAdd(APIView):
 
 
 class DictionariesUpdate(APIView):
-
     permission_classes = [permissions.AllowAny]
 
     def get_dict_obj(self, id):
@@ -169,3 +165,31 @@ class DictionariesUpdate(APIView):
             # TODO: add translate and delete
             dictionary_obj.save()
         return Response({'status': 'ok'})
+
+
+class CheckPermission(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = request.user
+        data = {}
+        if user.is_superuser:
+            data['permission'] = 'superuser'
+        return Response(data)
+
+
+class GetTokenByUser(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_user(self, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise Http404
+        return user
+
+    def post(self, request, format=None):
+        username = request.data['data']['username']
+        user = self.get_user(username)
+        data = {'token': user.auth_token.key}
+        return Response(data)

@@ -120,3 +120,14 @@ class WordPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Words
         fields = ('word', 'language')
+
+
+class DictionaryDetailSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(max_length=100)
+    language = serializers.CharField(max_length=100)
+    language_to = serializers.CharField(max_length=100)
+    is_approve = serializers.BooleanField()
+    is_active = serializers.BooleanField()
+    translate = TranslateDetailSerializer(many=True, read_only=True)
+
