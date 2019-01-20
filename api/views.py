@@ -2,7 +2,8 @@ import json
 
 from django.contrib.auth.models import User, Group
 from django.http import Http404
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Q
@@ -15,16 +16,21 @@ from word.models import Languages, Words, Translate, Dictionaries
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserListSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = Group.objects.all()
     serializer_class = GroupListSerializer
 
 
 class LanguagesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         languages = Languages.objects.all()
@@ -32,24 +38,31 @@ class LanguagesView(APIView):
         return Response(serializer.data)
 
 
-class WordsView(APIView):
-    permission_classes = [permissions.AllowAny]
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 10
 
-    def get(self, request):
-        words = Words.objects.all()
-        serializer = WordsSerializer(words, many=True)
-        return Response(serializer.data)
 
+class WordsView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Words.objects.all()
+    serializer_class = WordsSerializer
+    pagination_class = LargeResultsSetPagination
 
 class TranslateView(APIView):
 
     def get(self, request):
-        translate = Translate.objects.all()
+        start_index = int(request.GET.get('startIndex', 0))
+        stop_index = int(request.GET.get('stopIndex', Translate.objects.all().count()))
+
+        translate = Translate.objects.all()[start_index:stop_index + 1]
         serializer = TranslateSerializer(translate, many=True)
         return Response(serializer.data)
 
 
 class DictionariesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         # .filter(Q(income__gte=5000) | Q(income__isnull=True))
@@ -59,6 +72,7 @@ class DictionariesView(APIView):
 
 
 class UserDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -73,6 +87,7 @@ class UserDetail(APIView):
 
 
 class TranslateDetailDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -87,6 +102,7 @@ class TranslateDetailDetail(APIView):
 
 
 class LanguageDetailDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -101,6 +117,7 @@ class LanguageDetailDetail(APIView):
 
 
 class DictionaryDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk, user):
         try:
@@ -115,7 +132,7 @@ class DictionaryDetail(APIView):
 
 
 class LanguageAdd(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         language = LanguagePostSerializer(data=request.data)
@@ -126,7 +143,7 @@ class LanguageAdd(APIView):
 
 
 class WordAdd(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_language_id(self, language):
         try:
@@ -145,7 +162,7 @@ class WordAdd(APIView):
 
 
 class DictionariesUpdate(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_dict_obj(self, id):
         try:
@@ -193,3 +210,43 @@ class GetTokenByUser(APIView):
         user = self.get_user(username)
         data = {'token': user.auth_token.key}
         return Response(data)
+
+
+class SearchWord(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_words(self, word):
+        try:
+            words = Words.objects.filter(word__startswith=word).extra(select={'length': 'Length(word)'}).order_by(
+                'length'
+            )[:10]
+        except User.DoesNotExist:
+            raise Http404
+        return words
+
+    def post(self, request, format=None):
+        word = request.data['word']
+        words = self.get_words(word)
+        serializer = WordsSerializer(words, many=True)
+        return Response(serializer.data)
+
+
+class SearchTranslate(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_translate(self, word):
+        try:
+            translate = Translate.objects.filter(word__word=word).first()
+        except User.DoesNotExist:
+            raise Http404
+        return translate
+
+    def post(self, request, format=None):
+        word = request.data['word']
+        tanslate = self.get_translate(word)
+        if tanslate:
+            word = tanslate.translate
+        else:
+            word = None
+        serializer = WordsSerializer(word)
+        return Response(serializer.data)

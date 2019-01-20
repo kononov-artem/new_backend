@@ -26,6 +26,8 @@ urlpatterns = [
 
     path('check-permission/', views.CheckPermission.as_view(), name='check_permission'),
     path('get-token-by-user/', views.GetTokenByUser.as_view(), name='get_token_by_user'),
+    path('search-word/', views.SearchWord.as_view(), name='search_word'),
+    path('search-translate/', views.SearchTranslate.as_view(), name='search_translate'),
 
     #     # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 

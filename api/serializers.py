@@ -53,7 +53,7 @@ class TranslateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Translate
-        fields = ('language', 'language_to', 'word', 'translate')
+        fields = ('id', 'language', 'language_to', 'word', 'translate')
 
 
 class DictionariesSerializer(serializers.ModelSerializer):
