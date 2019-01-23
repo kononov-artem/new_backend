@@ -48,6 +48,13 @@ class Dictionaries(models.Model):
         return self.name
 
 
+class WordsStudied(models.Model):
+    start_date = models.DateTimeField(default=datetime.datetime.now())
+    progress = models.IntegerField(default=0)
+    translate = models.ManyToManyField(Translate)
+    user = models.ManyToManyField(User)
+
+
 def clear():
     Translate.objects.all().delete()
     Dictionaries.objects.all().delete()
